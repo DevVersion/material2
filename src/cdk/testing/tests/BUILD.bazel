@@ -30,7 +30,7 @@ ts_library(
 )
 
 ng_test_library(
-    name = "unit_test_sources",
+    name = "unit_tests_lib",
     srcs = glob(
         [
             "**/*.spec.ts",
@@ -51,7 +51,7 @@ ng_test_library(
 )
 
 ng_e2e_test_library(
-    name = "e2e_test_sources",
+    name = "e2e_tests_lib",
     srcs = glob([
         "**/*.e2e.spec.ts",
         "**/*.spec.d.ts",
