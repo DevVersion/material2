@@ -45,7 +45,8 @@
     "ts-circular-deps:approve": "yarn -s ts-circular-deps approve --config ./src/circular-deps-test.conf.js",
     "ng-dev": "ts-node -O {\\\"module\\\":\\\"commonjs\\\"} ./node_modules/@angular/dev-infra-private/cli.js",
     "merge": "ng-dev pr merge",
-    "approve-api": "node ./scripts/approve-api-golden.js"
+    "approve-api": "node ./scripts/approve-api-golden.js",
+    "sauce-bazel-daemon": "ts-node --project tools/saucelabs-bazel/tsconfig.json tools/saucelabs-bazel/background-service/cli.ts"
   },
   "version": "10.0.0-next.1",
   "dependencies": {

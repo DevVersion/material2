@@ -141,7 +141,7 @@ var_20: &only_on_pull_requests_filter
 # -----------------------------
 # Container version of CircleCI
 # -----------------------------
-version: 2
+version: 2.1
 
 # -----------------------------------------------------------------------------------------
 # Job definitions. Jobs which are defined just here, will not run automatically. Each job
@@ -252,17 +252,35 @@ jobs:
     resource_class: xlarge
     environment:
       SAUCE_USERNAME: "angular-components"
-      SAUCE_ACCESS_KEY: "63348201a846-eeb9-3ee4-300f-ea990b8a"
-      # Note: This number should not be too high because otherwise we might run into
-      # a rate limit exception.
-      KARMA_PARALLEL_BROWSERS: 2
+      SAUCE_ACCESS_KEY: "a8b099ae-f003-4ee3-9bee-648a10284336"
+      SAUCE_TUNNEL_IDENTIFIER: angular-material-<< pipeline.id >>
     steps:
     - *checkout_code
     - *restore_cache
     - *setup_bazel_ci_config
     - *yarn_install
 
-    - run: ./scripts/circleci/run-saucelabs-tests.sh
+    - run:
+        name: Saucelabs tunnel
+        command: ./scripts/saucelabs/start-tunnel.sh
+        background: true
+    - run:
+        name: Waiting for Saucelabs tunnel
+        command: ./scripts/saucelabs/wait-tunnel.sh
+    - run:
+        name: Saucelabs browser daemon
+        command: yarn -s sauce-bazel-daemon
+        background: true
+
+    - run:
+        name: Running tests
+        command: |
+          TESTS=$(yarn -s bazel query --output label 'attr("tags", "saucelabs", //src/...)')
+          yarn -s bazel test ${TESTS} --jobs=2 --test_output=streamed
+
+    - run:
+        name: Shutting down tunnel
+        command: ./scripts/saucelabs/stop-tunnel.sh
 
   # ----------------------------------
   # Lint job.
